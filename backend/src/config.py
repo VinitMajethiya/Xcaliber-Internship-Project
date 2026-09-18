@@ -22,7 +22,7 @@ for p in env_paths:
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
 DATABASE_URL = os.getenv("DATABASE_URL", "")
-DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite")
 
 # Default dataset: resolve olist_master.csv across root or backend subdirectory deployments
 possible_paths = [
@@ -43,7 +43,7 @@ for p in possible_paths:
 def get_llm(model_name: str = DEFAULT_MODEL, temperature: float | None = None) -> Any:
     """
     Factory function returning the configured LLM instance.
-    Defaults to Gemini 3.6 Flash via langchain-google-genai.
+    Defaults to Gemini 3.1 Flash Lite via langchain-google-genai.
     """
     if not GEMINI_API_KEY:
         logger.warning("GEMINI_API_KEY / GOOGLE_API_KEY is not set. LLM calls will fail unless a mock/key is provided.")

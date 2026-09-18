@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sidebar } from '../components/Sidebar';
 import { MessageBubble } from '../components/MessageBubble';
 import { ChatMessage, DatasetProfile, ReasoningStep } from '../lib/types';
-import { checkBackendHealth, fetchDatasetProfile, streamChatQuery } from '../lib/api';
+import { checkBackendHealth, fetchDatasetProfile, streamChatQuery, API_BASE } from '../lib/api';
 import {
   Send,
   Loader2,
@@ -165,10 +165,13 @@ export default function Home() {
         );
         setIsLoading(false);
       },
-      onError: (err) => {
+      onError: (err: any) => {
         if (wakingTimeoutRef.current) clearTimeout(wakingTimeoutRef.current);
         setIsWakingUp(false);
         setIsLoading(false);
+
+        const errorDetail =
+          err?.error || err?.message || (typeof err === 'string' ? err : 'Unable to connect to backend service.');
 
         setMessages((prev) =>
           prev.map((msg) => {
@@ -176,8 +179,7 @@ export default function Home() {
               return {
                 ...msg,
                 isStreaming: false,
-                content:
-                  '⚠️ **Execution Error**: Unable to complete analysis with the backend service. Please check your connection.',
+                content: `⚠️ **Execution Error**: ${errorDetail}\n\n*Target Endpoint: \`${API_BASE}/api/chat\`*`,
               };
             }
             return msg;

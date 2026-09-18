@@ -1,6 +1,7 @@
 import { DatasetProfile } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+const rawApiBase = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
+export const API_BASE = rawApiBase.replace(/\/+$/, '');
 
 export async function checkBackendHealth(): Promise<{ status: string; service: string } | null> {
   try {
@@ -60,7 +61,8 @@ export async function streamChatQuery({
     });
 
     if (!response.ok || !response.body) {
-      throw new Error(`Chat request failed with status: ${response.status}`);
+      const errorBody = await response.text().catch(() => '');
+      throw new Error(`Chat API error (${response.status}): ${errorBody || response.statusText}`);
     }
 
     const reader = response.body.getReader();
@@ -102,8 +104,8 @@ export async function streamChatQuery({
         }
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in SSE stream:', error);
-    if (onError) onError(error);
+    if (onError) onError({ error: error?.message || String(error) });
   }
 }
