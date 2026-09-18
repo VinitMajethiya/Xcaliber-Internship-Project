@@ -50,7 +50,9 @@ def planner_node(state: AgentState) -> dict[str, Any]:
     # Fallback / heuristic plan if API key is not present (for local testing/offline validation)
     if not GEMINI_API_KEY:
         lower_q = user_query.lower()
-        if any(w in lower_q for w in ["hi", "hello", "who are you", "help", "capabilities"]):
+        words_q = set(lower_q.replace("?", "").replace(".", "").replace(",", "").split())
+        
+        if words_q & {"hi", "hello", "hey", "howdy"} or any(p in lower_q for p in ["who are you", "what can you", "help me", "capabilities", "what do you do"]):
             route = "direct_answer"
             rationale = "User inquiry is a greeting or capability question. Routing directly to introductory assistant response."
             tool_plan = []
@@ -103,9 +105,9 @@ def planner_node(state: AgentState) -> dict[str, Any]:
                     "args": {"operation": "share_of_total", "column": "total_payment", "data_ref": 0}
                 }
             ]
-        elif any(w in lower_q for w in ["unusual", "outlier", "anomaly", "anomalies"]):
+        elif any(w in lower_q for w in ["unusual", "outlier", "anomaly", "anomalies", "summarize", "summary", "strange", "spike", "irregularity"]):
             route = "tools"
-            rationale = "User requested anomaly detection. Running IQR outlier analysis on order freight and price metrics."
+            rationale = "User requested anomaly detection or an open-ended summary. Running IQR outlier analysis and descriptive stats across key metrics."
             tool_plan = [
                 {
                     "tool": "compute_metrics",
@@ -232,6 +234,8 @@ def tool_executor_node(state: AgentState) -> dict[str, Any]:
             "error": str(e),
         }
 
+    # Stamp the tool name into the result envelope so synthesizer and test assertions can reference it
+    tool_result["tool"] = tool_name
     tool_results.append(tool_result)
 
     # 3. Log reasoning trace step
