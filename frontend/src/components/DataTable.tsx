@@ -61,69 +61,69 @@ export const DataTable: React.FC<DataTableProps> = ({ data, title = 'Query Datas
   if (!data || data.length === 0) return null;
 
   return (
-    <div className="my-3 rounded-lg border border-slate-800 bg-[#090d16] p-3 text-xs shadow-lg">
+    <div className="my-3 rounded border border-[#1e232e] bg-[#0c0f14] p-3 text-xs shadow-sm">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-slate-800/80">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 mb-2.5 border-b border-[#1a1f28]">
         <div className="flex items-center gap-2">
-          <div className="flex h-5 w-5 items-center justify-center rounded bg-blue-500/10 text-blue-400">
+          <div className="flex h-5 w-5 items-center justify-center rounded bg-[#161a22] text-slate-300">
             <FileSpreadsheet className="h-3.5 w-3.5" />
           </div>
-          <span className="font-semibold text-slate-200">{title}</span>
-          <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] font-mono text-slate-400">
-            {data.length} records
+          <span className="font-semibold text-[#d1d7e0] text-[11.5px]">{title}</span>
+          <span className="rounded bg-[#161a22] border border-[#202532] px-1.5 py-0.2 text-[10px] font-mono text-[#768294]">
+            {data.length} rows
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Quick Search */}
           <div className="relative">
-            <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-500" />
+            <Search className="absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-[#5a6474]" />
             <input
               type="text"
-              placeholder="Filter data..."
+              placeholder="Filter table..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="h-7 w-32 rounded border border-slate-800 bg-slate-900/90 pl-7 pr-2 text-[11px] text-slate-200 placeholder-slate-500 focus:border-blue-500 focus:outline-none md:w-44"
+              className="h-6.5 w-32 rounded border border-[#222734] bg-[#12151c] pl-7 pr-2 text-[10.5px] text-[#d1d7e0] placeholder-[#5a6474] focus:border-[#384356] focus:outline-none md:w-44"
             />
           </div>
 
           {/* Export CSV Button */}
           <button
             onClick={downloadCSV}
-            title="Download records as CSV"
-            className="flex h-7 items-center gap-1.5 rounded border border-slate-700 bg-slate-800/80 px-2.5 font-medium text-slate-300 transition-colors hover:bg-slate-700 hover:text-white"
+            title="Download rows as CSV"
+            className="flex h-6.5 items-center gap-1.5 rounded border border-[#252b38] bg-[#141720] px-2.5 font-mono text-[10.5px] text-[#9ba4b3] transition-colors hover:bg-[#1d222c] hover:text-white"
           >
-            <Download className="h-3 w-3 text-blue-400" />
+            <Download className="h-3 w-3 text-slate-400" />
             <span>Export CSV</span>
           </button>
         </div>
       </div>
 
       {/* Table grid */}
-      <div className="overflow-x-auto rounded border border-slate-800/80">
-        <table className="w-full text-left font-mono">
-          <thead className="bg-[#0f172a] text-[10px] uppercase tracking-wider text-slate-400">
+      <div className="overflow-x-auto rounded border border-[#1b202a]">
+        <table className="w-full text-left font-mono text-[10.5px]">
+          <thead className="bg-[#12151c] text-[9.5px] uppercase tracking-wider text-[#717d91]">
             <tr>
               {columns.map((col) => (
-                <th key={col} className="border-b border-slate-800 px-3 py-2 font-semibold">
+                <th key={col} className="border-b border-[#1b202a] px-3 py-1.5 font-semibold">
                   {col}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 text-[11px] text-slate-300">
+          <tbody className="divide-y divide-[#171b23] text-[#b0bac6]">
             {paginatedData.map((row, idx) => (
-              <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
+              <tr key={idx} className="hover:bg-[#141820] transition-colors">
                 {columns.map((col) => {
                   const val = row[col];
                   const isNumber = typeof val === 'number';
                   return (
                     <td
                       key={col}
-                      className={`px-3 py-1.5 ${isNumber ? 'text-right text-emerald-400' : ''}`}
+                      className={`px-3 py-1.5 ${isNumber ? 'text-right text-[#34d399]' : ''}`}
                     >
                       {val !== null && val !== undefined
                         ? isNumber
@@ -141,22 +141,22 @@ export const DataTable: React.FC<DataTableProps> = ({ data, title = 'Query Datas
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between pt-2 text-[11px] text-slate-400">
+        <div className="flex items-center justify-between pt-2 text-[10.5px] font-mono text-[#626e80]">
           <span>
-            Page {currentPage} of {totalPages} ({filteredData.length} matches)
+            Page {currentPage} of {totalPages} ({filteredData.length} records)
           </span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="rounded p-1 hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="rounded p-1 hover:bg-[#181c24] disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="rounded p-1 hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="rounded p-1 hover:bg-[#181c24] disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { BarChart3, Maximize2, Minimize2, AlertCircle, Download } from 'lucide-react';
+import { BarChart2, Maximize2, Minimize2, AlertCircle, Download } from 'lucide-react';
 
 interface ChartCanvasProps {
   spec: Record<string, any> | null;
@@ -29,25 +29,23 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
         const data = spec.data || [];
         const baseLayout = spec.layout || {};
 
-        const chartTitle = title || baseLayout.title?.text || 'Interactive Visualization';
-
         const mergedLayout = {
           ...baseLayout,
           title: undefined, // Handled in component header
           autosize: true,
           paper_bgcolor: 'transparent',
-          plot_bgcolor: 'rgba(15, 23, 42, 0.5)',
+          plot_bgcolor: 'rgba(18, 22, 29, 0.5)',
           font: {
             family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             size: 11,
-            color: '#94a3b8',
+            color: '#828e9f',
             ...baseLayout.font,
           },
           margin: {
             l: 50,
-            r: 30,
-            t: 20,
-            b: 45,
+            r: 25,
+            t: 15,
+            b: 40,
             ...baseLayout.margin,
           },
         };
@@ -115,21 +113,21 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
 
   return (
     <div
-      className={`my-3.5 rounded-xl border border-slate-800 bg-[#090d16] p-3.5 shadow-xl transition-all duration-200 ${
-        isExpanded ? 'ring-2 ring-blue-500/40' : ''
+      className={`my-3.5 rounded border border-[#1e232e] bg-[#0c0f14] p-3 shadow-sm transition-all duration-200 ${
+        isExpanded ? 'ring-1 ring-[#3b82f6]' : ''
       }`}
     >
       {/* Chart Header Bar */}
-      <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-800/80">
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-[#1b202a]">
         <div className="flex items-center gap-2">
-          <div className="flex h-5 w-5 items-center justify-center rounded bg-blue-500/10 text-blue-400">
-            <BarChart3 className="h-3.5 w-3.5" />
+          <div className="flex h-5 w-5 items-center justify-center rounded bg-[#161a22] text-slate-300">
+            <BarChart2 className="h-3.5 w-3.5" />
           </div>
-          <span className="text-xs font-semibold text-slate-200">
-            {title || spec.layout?.title?.text || 'Interactive Visualization'}
+          <span className="text-xs font-semibold text-[#d1d7e0]">
+            {title || spec.layout?.title?.text || 'Visualization'}
           </span>
-          <span className="rounded border border-blue-500/20 bg-blue-500/10 px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-wider text-blue-300">
-            Plotly Dynamic
+          <span className="rounded border border-[#1e232e] bg-[#12151c] px-1.5 py-0.2 text-[9px] font-mono uppercase tracking-wider text-[#7a8799]">
+            Dynamic Spec
           </span>
         </div>
 
@@ -137,7 +135,7 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
           <button
             onClick={handleDownloadPNG}
             title="Download Chart as PNG"
-            className="flex items-center gap-1 rounded border border-slate-800 bg-slate-900/80 px-2 py-1 text-[11px] text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+            className="flex items-center gap-1 rounded border border-[#222733] bg-[#12151c] px-2 py-0.5 text-[10.5px] font-mono text-[#8b95a5] transition-colors hover:bg-[#181c25] hover:text-[#f1f3f5]"
           >
             <Download className="h-3 w-3 text-slate-400" />
             <span className="hidden sm:inline">Export PNG</span>
@@ -146,16 +144,16 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
           <button
             onClick={() => setIsExpanded(!isExpanded)}
             title={isExpanded ? 'Collapse chart' : 'Expand chart'}
-            className="rounded border border-slate-800 bg-slate-900/80 p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+            className="rounded border border-[#222733] bg-[#12151c] p-1 text-[#8b95a5] hover:bg-[#181c25] hover:text-[#f1f3f5] transition-colors"
           >
-            {isExpanded ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            {isExpanded ? <Minimize2 className="h-3 w-3" /> : <Maximize2 className="h-3 w-3" />}
           </button>
         </div>
       </div>
 
       {/* Error state */}
       {renderError ? (
-        <div className="flex items-center gap-2 p-3 text-xs text-rose-300 bg-rose-950/20 border border-rose-900/30 rounded-lg">
+        <div className="flex items-center gap-2 p-2.5 text-xs text-rose-300 bg-rose-950/20 border border-rose-900/30 rounded">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{renderError}</span>
         </div>
@@ -163,7 +161,7 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
         /* Plotly DOM Container */
         <div
           ref={containerRef}
-          style={{ height: isExpanded ? '520px' : '340px' }}
+          style={{ height: isExpanded ? '520px' : '330px' }}
           className="w-full transition-all duration-200"
         />
       )}

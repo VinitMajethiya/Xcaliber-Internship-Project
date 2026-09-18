@@ -10,11 +10,7 @@ import {
   Loader2,
   RefreshCw,
   Database,
-  BarChart3,
-  TrendingUp,
-  Truck,
-  AlertOctagon,
-  Sparkles,
+  Terminal,
 } from 'lucide-react';
 
 export default function Home() {
@@ -49,20 +45,20 @@ export default function Home() {
     };
     initData();
 
-    // Add initial professional welcome message
+    // Initial executive welcome
     setMessages([
       {
         id: 'welcome-1',
         role: 'assistant',
         content:
-          "### 📊 Insight Copilot: Brazilian E-Commerce Analytics\n\n" +
-          "I am your dedicated **AI Business Intelligence Analyst** connected to **112,650 verified customer orders** from the Brazilian E-Commerce (Olist) ecosystem (2016–2018).\n\n" +
-          "**Analytical Capabilities:**\n" +
-          "- **Volume & Revenue Aggregation**: Category rankings, payment methods, and revenue share.\n" +
-          "- **Logistics & Delivery Operations**: Freight cost drivers, shipping transit days, and regional bottlenecks.\n" +
-          "- **Statistical Intelligence**: Seasonality testing (CV), IQR outlier anomaly detection, and correlation analysis.\n" +
-          "- **Interactive Visualizations**: High-contrast Plotly line, bar, scatter, and area distributions.\n\n" +
-          "*Select an analytical template from the sidebar or type a plain English business inquiry below.*",
+          "### Olist E-Commerce Analytics Workspace\n\n" +
+          "Connected to **112,650 validated customer transactions** (Brazilian E-Commerce, 2016–2018).\n\n" +
+          "**Analytical Scope:**\n" +
+          "- **Volume & Financials**: Category rankings, payment methods, installments, and revenue share.\n" +
+          "- **Logistics & Regional Performance**: Freight metrics, delivery transit days, and cross-state comparisons (e.g. SP vs RJ).\n" +
+          "- **Statistical Intelligence**: Seasonality testing (CV), IQR anomaly detection, and correlation analysis.\n" +
+          "- **Visualizations**: Dynamic Plotly distributions (line, bar, scatter, area).\n\n" +
+          "*Select a template from the left panel or type an analytical query below.*",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -81,9 +77,9 @@ export default function Home() {
         id: 'welcome-' + Date.now(),
         role: 'assistant',
         content:
-          "### 🔄 Fresh Session Initialized\n\nNew conversational checkpoint started with thread ID `" +
+          "### Fresh Analysis Thread Initialized\n\nCheckpoint registered with thread UUID `" +
           newThread.slice(0, 16) +
-          "...`. What dataset metrics or geographic slices would you like to investigate?",
+          "...`. Specify an analytical inquiry or metric slice to begin.",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -181,7 +177,7 @@ export default function Home() {
                 ...msg,
                 isStreaming: false,
                 content:
-                  '⚠️ **Execution Error**: Unable to complete analysis with the backend service. Check your connection or verify that Render is awake.',
+                  '⚠️ **Execution Error**: Unable to complete analysis with the backend service. Please check your connection.',
               };
             }
             return msg;
@@ -192,7 +188,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#080c14] text-slate-100 font-sans">
+    <div className="flex h-screen w-screen overflow-hidden bg-[#0d0f12] text-[#f1f3f5] font-sans">
       {/* Left Domain Navigation Sidebar */}
       <Sidebar
         profile={profile}
@@ -204,34 +200,34 @@ export default function Home() {
       {/* Main Analytical Canvas */}
       <main className="flex-1 flex flex-col h-full overflow-hidden relative">
         {/* Top Control Bar */}
-        <header className="h-14 px-6 border-b border-slate-800/80 bg-[#0d131f]/80 backdrop-blur-md flex items-center justify-between flex-shrink-0 z-10">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-semibold text-slate-200">
-              Olist E-Commerce Analytics Workspace
+        <header className="h-12 px-5 border-b border-[#1c212a] bg-[#101319] flex items-center justify-between flex-shrink-0 z-10">
+          <div className="flex items-center gap-2.5">
+            <span className="text-xs font-semibold text-[#f1f3f5] tracking-tight">
+              Olist Analytics Workspace
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1 rounded bg-slate-800/80 px-2 py-0.5 text-[10px] font-mono text-slate-400 border border-slate-700/50">
-              <Database className="h-3 w-3 text-blue-400" />
-              <span>112.6k rows</span>
+            <span className="hidden sm:inline-flex items-center gap-1 rounded border border-[#202532] bg-[#141720] px-2 py-0.5 text-[10px] font-mono text-[#8b95a5]">
+              <Database className="h-3 w-3 text-slate-400" />
+              <span>112,650 rows</span>
             </span>
-            <span className="hidden md:inline-flex text-xs text-slate-500 font-mono">
+            <span className="hidden md:inline-flex text-[11px] text-[#556070] font-mono">
               [thread: {threadId.slice(0, 10)}...]
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {isWakingUp && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs animate-pulse font-mono">
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>Waking backend service…</span>
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded border border-amber-800/40 bg-amber-950/30 text-amber-400 text-[10.5px] animate-pulse font-mono">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Waking backend…</span>
               </div>
             )}
             <button
               onClick={handleNewChat}
               title="Reset conversation session"
-              className="flex items-center gap-1.5 rounded-lg border border-slate-700/70 bg-slate-800/60 px-2.5 py-1.5 text-xs text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              className="flex items-center gap-1.5 rounded border border-[#242a36] bg-[#141720] px-2.5 py-1 text-xs text-[#9ba4b3] hover:bg-[#1c212c] hover:text-white transition-colors"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-slate-400" />
-              <span className="hidden sm:inline font-mono text-[11px]">New Session</span>
+              <RefreshCw className="w-3 h-3 text-slate-400" />
+              <span className="hidden sm:inline font-mono text-[10.5px]">Reset</span>
             </button>
           </div>
         </header>
@@ -252,9 +248,12 @@ export default function Home() {
         </div>
 
         {/* Command Bar Input Box */}
-        <div className="p-4 border-t border-slate-800/80 bg-[#0d131f] flex-shrink-0">
+        <div className="p-3.5 border-t border-[#1c212a] bg-[#101319] flex-shrink-0">
           <div className="max-w-4xl mx-auto">
-            <div className="relative flex items-center rounded-xl border border-slate-700/80 bg-slate-900/90 shadow-inner focus-within:border-blue-500 transition-all">
+            <div className="relative flex items-center rounded border border-[#252b37] bg-[#141720] focus-within:border-[#384356] transition-all">
+              <div className="pl-3.5 flex items-center text-[#556070]">
+                <Terminal className="h-3.5 w-3.5" />
+              </div>
               <input
                 type="text"
                 value={inputQuery}
@@ -267,24 +266,24 @@ export default function Home() {
                 }}
                 placeholder="Ask an analytical question (e.g., 'What were the top 3 product categories by payment value?')..."
                 disabled={isLoading}
-                className="w-full bg-transparent px-4 py-3.5 text-sm text-slate-100 placeholder-slate-500 outline-none disabled:opacity-50"
+                className="w-full bg-transparent px-3 py-2.5 text-xs text-[#f1f3f5] placeholder-[#5a6575] outline-none disabled:opacity-50"
               />
 
-              <div className="pr-2 flex items-center gap-2">
-                <span className="hidden sm:inline font-mono text-[10px] text-slate-400">
+              <div className="pr-2 flex items-center gap-1.5">
+                <span className="hidden sm:inline font-mono text-[9.5px] text-[#556070]">
                   Enter ↵
                 </span>
                 <button
                   onClick={() => handleSend()}
                   disabled={isLoading || !inputQuery.trim()}
-                  className="rounded-lg bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-md shadow-blue-600/20"
+                  className="rounded border border-[#2b3342] bg-[#1c212b] px-3 py-1.5 text-xs font-medium text-[#c4cbd4] transition-all hover:bg-[#252c3a] hover:text-white disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-sm"
                 >
                   {isLoading ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <Loader2 className="w-3 h-3 animate-spin text-slate-300" />
                   ) : (
                     <>
-                      <span>Execute</span>
-                      <Send className="w-3 h-3" />
+                      <span className="font-mono text-[11px]">Run</span>
+                      <Send className="w-2.5 h-2.5" />
                     </>
                   )}
                 </button>

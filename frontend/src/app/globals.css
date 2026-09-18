@@ -5,19 +5,17 @@
 @tailwind utilities;
 
 :root {
-  --background: #080c14;
-  --sidebar: #0d131f;
-  --surface-card: #111827;
-  --surface-card-hover: #162032;
-  --border: #1e293b;
-  --border-subtle: rgba(255, 255, 255, 0.06);
+  --background: #0d0f12;
+  --sidebar: #12151b;
+  --surface-card: #161922;
+  --surface-card-hover: #1c202b;
+  --border: #222733;
+  --border-subtle: rgba(255, 255, 255, 0.05);
   --border-focus: #3b82f6;
-  --foreground: #f8fafc;
-  --foreground-muted: #94a3b8;
-  --foreground-subtle: #64748b;
-  --primary: #3b82f6;
-  --primary-glow: rgba(59, 130, 246, 0.15);
-  --accent: #0ea5e9;
+  --foreground: #f1f3f5;
+  --foreground-muted: #8b95a5;
+  --foreground-subtle: #5a6474;
+  --accent: #2563eb;
   --success: #10b981;
   --warning: #f59e0b;
   --error: #ef4444;
@@ -35,10 +33,10 @@ code, pre, .font-mono {
   font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Custom modern scrollbars */
+/* Custom hairline scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -46,38 +44,38 @@ code, pre, .font-mono {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: #252b37;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #343c4c;
 }
 
-/* Analyst Markdown Report Styling */
+/* Analyst Executive Report Styling */
 .analyst-prose {
-  color: #e2e8f0;
-  line-height: 1.65;
-  font-size: 0.875rem;
+  color: #d1d7e0;
+  line-height: 1.68;
+  font-size: 0.86rem;
 }
 
 .analyst-prose h1,
 .analyst-prose h2,
 .analyst-prose h3,
 .analyst-prose h4 {
-  color: #f8fafc;
+  color: #f1f3f5;
   font-weight: 600;
   letter-spacing: -0.01em;
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
+  margin-top: 0.9rem;
+  margin-bottom: 0.45rem;
 }
 
 .analyst-prose h1 { font-size: 1.15rem; }
 .analyst-prose h2 { font-size: 1.05rem; }
-.analyst-prose h3 { font-size: 0.95rem; }
+.analyst-prose h3 { font-size: 0.92rem; }
 
 .analyst-prose p {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.7rem;
 }
 
 .analyst-prose strong {
@@ -88,13 +86,13 @@ code, pre, .font-mono {
 .analyst-prose ul {
   list-style-type: disc;
   padding-left: 1.25rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.7rem;
 }
 
 .analyst-prose ol {
   list-style-type: decimal;
   padding-left: 1.25rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.7rem;
 }
 
 .analyst-prose li {
@@ -104,35 +102,35 @@ code, pre, .font-mono {
 /* Data Tables */
 .analyst-table-container {
   overflow-x: auto;
-  margin: 0.85rem 0;
-  border-radius: 0.5rem;
-  border: 1px solid #1e293b;
-  background: #090d16;
+  margin: 0.75rem 0;
+  border-radius: 0.375rem;
+  border: 1px solid #222733;
+  background: #11141a;
 }
 
 .analyst-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   text-align: left;
 }
 
 .analyst-table th {
-  background: #0f172a;
-  color: #94a3b8;
+  background: #161922;
+  color: #8b95a5;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.6rem 0.85rem;
-  border-bottom: 1px solid #1e293b;
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid #222733;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
 }
 
 .analyst-table td {
-  padding: 0.55rem 0.85rem;
-  border-bottom: 1px solid rgba(30, 41, 59, 0.6);
-  color: #cbd5e1;
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid #1c202a;
+  color: #c4cbd4;
 }
 
 .analyst-table tr:last-child td {
@@ -140,15 +138,15 @@ code, pre, .font-mono {
 }
 
 .analyst-table tr:hover td {
-  background: rgba(30, 41, 59, 0.4);
+  background: rgba(34, 39, 51, 0.4);
 }
 
 .analyst-prose code:not(pre code) {
-  background: rgba(30, 41, 59, 0.7);
-  color: #38bdf8;
+  background: #1a1e27;
+  color: #93c5fd;
   padding: 0.15rem 0.35rem;
   border-radius: 0.25rem;
   font-size: 0.775rem;
   font-family: 'JetBrains Mono', monospace;
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  border: 1px solid #283040;
 }

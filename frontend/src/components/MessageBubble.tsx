@@ -9,14 +9,13 @@ import { ChartCanvas } from './ChartCanvas';
 import { DataTable } from './DataTable';
 import {
   User,
-  Sparkles,
+  Terminal,
   Loader2,
   Copy,
   Check,
   Table as TableIcon,
   CornerDownRight,
   TrendingUp,
-  AlertCircle,
 } from 'lucide-react';
 
 interface MessageBubbleProps {
@@ -78,21 +77,21 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   }, [isUser, message.content, message.isStreaming, message.chart_spec]);
 
   return (
-    <div className={`group relative my-4 flex gap-3.5 ${isUser ? 'justify-end' : 'justify-start'}`}>
-      {/* Assistant Avatar */}
+    <div className={`group relative my-4 flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
+      {/* Analyst Icon */}
       {!isUser && (
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-blue-500/20 bg-blue-600/10 text-blue-400 mt-1 shadow-sm">
-          <Sparkles className="h-4 w-4" />
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border border-[#262c38] bg-[#151820] text-[#8b95a5] mt-1 shadow-sm">
+          <Terminal className="h-3.5 w-3.5 text-slate-300" />
         </div>
       )}
 
-      <div className={`flex max-w-[90%] md:max-w-[82%] flex-col ${isUser ? 'items-end' : 'items-start'}`}>
-        {/* Bubble container */}
+      <div className={`flex max-w-[92%] md:max-w-[85%] flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+        {/* Report block */}
         <div
-          className={`relative rounded-xl px-4 py-3.5 text-sm leading-relaxed transition-all duration-150 ${
+          className={`relative rounded-lg px-4 py-3.5 text-sm leading-relaxed transition-all duration-150 ${
             isUser
-              ? 'rounded-br-sm bg-blue-600 text-white shadow-md shadow-blue-600/10'
-              : 'rounded-bl-sm border border-slate-800 bg-[#0d1322] text-slate-200 shadow-md'
+              ? 'bg-[#1c212b] border border-[#2c3442] text-[#f1f3f5] shadow-sm'
+              : 'border border-[#222733] bg-[#12151b] text-[#d1d7e0] shadow-sm'
           }`}
         >
           {/* Query Execution Plan (Reasoning Trace) */}
@@ -125,13 +124,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
           {/* Tabular Raw Data Inspector Drawer */}
           {!isUser && rawTableData && (
-            <div className="mt-3 pt-2 border-t border-slate-800/80">
+            <div className="mt-3 pt-2 border-t border-[#202531]">
               <button
                 onClick={() => setShowRawData(!showRawData)}
-                className="flex items-center gap-1.5 rounded border border-slate-800 bg-slate-900/90 px-2.5 py-1 text-[11px] font-mono text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                className="flex items-center gap-1.5 rounded border border-[#262c39] bg-[#161a22] px-2.5 py-1 text-[11px] font-mono text-[#8b95a5] hover:bg-[#1f2430] hover:text-[#f1f3f5] transition-colors"
               >
-                <TableIcon className="h-3 w-3 text-blue-400" />
-                <span>{showRawData ? 'Hide Underlying Data Grid' : `View Data Grid (${rawTableData.data.length} rows)`}</span>
+                <TableIcon className="h-3 w-3 text-slate-400" />
+                <span>{showRawData ? 'Hide Underlying Data Grid' : `View Data Grid (${rawTableData.data.length} records)`}</span>
               </button>
 
               {showRawData && <DataTable data={rawTableData.data} title={rawTableData.summary} />}
@@ -140,23 +139,23 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
           {/* Streaming loader indicator */}
           {message.isStreaming && !message.content && (
-            <div className="flex items-center gap-2 py-1.5 text-xs text-blue-400">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            <div className="flex items-center gap-2 py-1.5 text-xs text-[#8b95a5]">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-400" />
               <span className="font-mono text-[11px]">Executing query plan and aggregating records...</span>
             </div>
           )}
 
-          {/* Hover Action Bar (Copy & Timestamp) */}
+          {/* Action Bar (Copy & Timestamp) */}
           {!isUser && message.content && (
-            <div className="mt-2.5 flex items-center justify-between pt-1 text-[10px] text-slate-500">
+            <div className="mt-2.5 flex items-center justify-between pt-1 text-[10px] text-[#5a6474]">
               <span className="font-mono">{message.timestamp}</span>
               <button
                 onClick={handleCopy}
                 title="Copy response to clipboard"
-                className="flex items-center gap-1 text-slate-400 hover:text-slate-200 transition-colors"
+                className="flex items-center gap-1 text-[#6b7687] hover:text-[#c4cbd4] transition-colors"
               >
                 {copied ? <Check className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3" />}
-                <span>{copied ? 'Copied' : 'Copy'}</span>
+                <span className="font-mono text-[10px]">{copied ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
           )}
@@ -164,7 +163,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
         {/* User Timestamp */}
         {isUser && (
-          <span className="mt-1 px-1 font-mono text-[10px] text-slate-500">
+          <span className="mt-1 px-1 font-mono text-[10px] text-[#5a6474]">
             {message.timestamp}
           </span>
         )}
@@ -172,17 +171,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
         {/* Contextual Smart Analytical Follow-Up Chips */}
         {!isUser && isLatest && followUpChips.length > 0 && onSelectPrompt && (
           <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <span className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-slate-400">
-              <CornerDownRight className="h-3 w-3 text-blue-400" />
+            <span className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-[#6b7687]">
+              <CornerDownRight className="h-3 w-3 text-slate-400" />
               <span>Suggested Analysis:</span>
             </span>
             {followUpChips.map((chip, idx) => (
               <button
                 key={idx}
                 onClick={() => onSelectPrompt(chip)}
-                className="flex items-center gap-1 rounded-full border border-slate-800 bg-slate-900/90 px-2.5 py-1 text-[11px] text-slate-300 hover:border-blue-500/40 hover:bg-slate-800 hover:text-white transition-all shadow-sm"
+                className="flex items-center gap-1 rounded border border-[#252b37] bg-[#141720] px-2.5 py-1 text-[11px] text-[#8b95a5] hover:border-[#374052] hover:bg-[#1a1e27] hover:text-[#f1f3f5] transition-all shadow-sm font-sans"
               >
-                <TrendingUp className="h-2.5 w-2.5 text-blue-400" />
+                <TrendingUp className="h-2.5 w-2.5 text-slate-400" />
                 <span>{chip}</span>
               </button>
             ))}
@@ -192,8 +191,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
       {/* User Avatar */}
       {isUser && (
-        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border border-slate-700 bg-slate-800 text-slate-300 mt-1 shadow-sm">
-          <User className="h-4 w-4" />
+        <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border border-[#2c3442] bg-[#1c212b] text-[#8b95a5] mt-1 shadow-sm">
+          <User className="h-3.5 w-3.5 text-slate-300" />
         </div>
       )}
     </div>
