@@ -52,12 +52,12 @@ Goal: all four tools real, conditional edge working.
 ### Day 3 — Reasoning surface and insight quality
 Goal: an evaluator can see the agent think.
 
-- [ ] Reasoning trace accumulated in state as structured steps (`list[ReasoningStep]`), not a blob of text
-- [ ] Next.js `ReasoningPanel` component renders: plan → tool chosen + why → args → result summary
-- [ ] Synthesizer prompt enforces the three-part answer shape (answer / numbers / why it matters)
-- [ ] Plotly charts render inline in `ChartCanvas` component when `chart_spec` is present in SSE stream
-- [ ] `PostgresSaver` (Neon.tech) checkpointer + `thread_id` (stored in `localStorage`) so follow-ups resolve pronouns ("what about the other region?") even after Render restarts
-- [ ] Error handling: tool exception → `error_handler` node → graceful JSON error response → user-facing message in UI, never a raw traceback
+- [x] Reasoning trace accumulated in state as structured steps (`list[ReasoningStep]`), not a blob of text
+- [x] Next.js `ReasoningPanel` component renders: plan → tool chosen + why → args → result summary
+- [x] Synthesizer prompt enforces the three-part answer shape (answer / numbers / why it matters)
+- [x] Plotly charts render inline in `ChartCanvas` component when `chart_spec` is present in SSE stream
+- [x] `PostgresSaver` (Neon.tech) checkpointer + `thread_id` (stored in `localStorage`) so follow-ups resolve pronouns ("what about the other region?") even after Render restarts
+- [x] Error handling: tool exception → `error_handler` node → graceful JSON error response → user-facing message in UI, never a raw traceback
 
 ### Day 4 — Deploy and harden
 
