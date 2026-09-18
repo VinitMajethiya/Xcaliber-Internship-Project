@@ -55,6 +55,19 @@ class ChatRequest(BaseModel):
     thread_id: str | None = Field(None, description="Conversation session thread UUID")
 
 
+@app.get("/")
+async def root():
+    """Root landing endpoint providing service health and discovery info."""
+    return {
+        "status": "healthy",
+        "service": "Insight Copilot API",
+        "version": "1.0.0",
+        "docs_url": "/docs",
+        "health_url": "/health",
+        "dataset_profile_url": "/api/dataset/profile",
+    }
+
+
 @app.get("/health")
 async def health():
     """Liveness & health probe for hosting platforms and frontend check."""
