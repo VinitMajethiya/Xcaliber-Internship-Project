@@ -97,11 +97,63 @@ Frontend UI will be live at: `http://localhost:3000`.
 ### 3. Verification Suite
 ```bash
 python scripts/test_phase2.py
+python scripts/final_routing_check.py
 ```
 
 ---
 
+## Production Deployment (Phase 4)
+
+### 1. Database Checkpointer (Neon.tech PostgreSQL)
+1. Create a free serverless PostgreSQL project at [Neon.tech](https://neon.tech).
+2. Copy the connection string (e.g. `postgresql://user:password@ep-xyz.region.aws.neon.tech/neondb?sslmode=require`).
+3. Set this as `DATABASE_URL` in your backend environment. LangGraph's `PostgresSaver` will automatically initialize tables on startup to maintain conversation history across server restarts.
+
+### 2. Backend Deployment (Render.com)
+1. In Render Dashboard, create a new **Web Service** and connect this repository:
+   - **Root Directory**: `.`
+   - **Environment**: `Python 3`
+   - **Build Command**: `pip install -r backend/requirements.txt`
+   - **Start Command**: `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
+   - **Health Check Path**: `/health`
+2. Add Environment Variables:
+   - `GOOGLE_API_KEY`: Your Gemini API key
+   - `DATABASE_URL`: Your Neon PostgreSQL connection string
+   - `PYTHON_VERSION`: `3.11.9`
+   - `BACKEND_CORS_ORIGINS`: `*`
+3. Verify backend health once deployed: `curl https://<your-render-url>/health` (returns `{"status":"healthy","service":"insight-copilot"}`).
+
+### 3. Frontend Deployment (Vercel)
+1. In Vercel, import this repository:
+   - **Framework Preset**: Next.js
+   - **Root Directory**: `frontend`
+2. Add Environment Variable:
+   - `NEXT_PUBLIC_API_URL`: `https://<your-render-app>.onrender.com`
+3. Deploy! The frontend includes cold-start detection that displays a smooth waking indicator if the backend is spinning up from idle.
+
+---
+
+## Evaluation Benchmark & Demo Queries
+
+Insight Copilot is benchmarked against the 9 canonical evaluation queries:
+
+| # | Query | Route | Expected Tools | Core Competency |
+|---|---|---|---|---|
+| 1 | *"hi there"* | `direct_answer` | *None* | Zero-tool greeting routing |
+| 2 | *"What were the top 3 product categories by payment value?"* | `tools` | `query_data` | Structured aggregation & ranking |
+| 3 | *"Is there a seasonal trend in bed_bath_table orders?"* | `tools` | `query_data` → `compute_metrics` | Multi-tool chained seasonality detection |
+| 4 | *"Compare SP and RJ customer states by freight value and delivery time"* | `tools` | `query_data` → `compute_metrics` | Comparative metric synthesis |
+| 5 | *"Plot monthly payment value for 2017"* | `tools` | `query_data` → `make_chart` | Inline interactive Plotly visual |
+| 6 | *"Summarize anything unusual or anomalous in payment values"* | `tools` | `compute_metrics` | IQR outlier & skewness analysis |
+| 7 | *"What about RJ?"* (follow-up) | `tools` | Resolves via checkpoint | Contextual pronoun resolution across turns |
+| 8 | *"What's the weather in Mumbai?"* | `unsupported` | *None* | Domain boundary enforcement & honest refusal |
+| 9 | *"Book me a flight"* | `unsupported` | *None* | Domain boundary enforcement & honest refusal |
+
+---
+
 ## Key Design Principles
-1. **Structured Tool Parameters over Arbitrary Code**: Prevents syntax errors, prompt injection, and hallucinated pandas functions.
+1. **Structured Tool Parameters over Arbitrary Code**: Prevents syntax errors, code injection, and hallucinated pandas functions.
 2. **Transparent Reasoning Surface**: Exposes step-by-step thoughts, tool invocations, arguments, and summaries in the UI reasoning drawer.
 3. **Graceful Error Recovery**: Tool validation errors provide closest-match suggestions (`difflib.get_close_matches`), enabling the agent to re-plan instead of throwing a traceback.
+4. **Resilient Production Checkpointing**: Neon PostgreSQL `PostgresSaver` handles serverless cold-starts without losing user conversation context.
+

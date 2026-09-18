@@ -22,14 +22,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS setup
-cors_origins_str = os.getenv("BACKEND_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,*")
+# CORS setup: allow local dev, Vercel deployments, and wildcard fallback
+cors_origins_str = os.getenv("BACKEND_CORS_ORIGINS", "*")
 cors_origins = [orig.strip() for orig in cors_origins_str.split(",") if orig.strip()]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
-    allow_credentials=True,
+    allow_credentials=False if "*" in cors_origins else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

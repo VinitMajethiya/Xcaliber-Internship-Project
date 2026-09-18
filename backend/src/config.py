@@ -20,20 +20,24 @@ for p in env_paths:
         load_dotenv(p)
         logger.info(f"Loaded environment from {p}")
 
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 DEFAULT_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
-# Default dataset: prioritize olist_master.csv if present, else fallback to global_superstore.csv
-olist_path = root_dir / "data" / "olist_master.csv"
-superstore_path = root_dir / "data" / "global_superstore.csv"
-
-if os.getenv("DATASET_PATH"):
-    DATASET_PATH = os.getenv("DATASET_PATH")
-elif olist_path.exists():
-    DATASET_PATH = str(olist_path)
-else:
-    DATASET_PATH = str(superstore_path)
+# Default dataset: resolve olist_master.csv across root or backend subdirectory deployments
+possible_paths = [
+    Path(os.getenv("DATASET_PATH")) if os.getenv("DATASET_PATH") else None,
+    root_dir / "data" / "olist_master.csv",
+    Path(__file__).resolve().parent.parent / "data" / "olist_master.csv",
+    Path.cwd() / "data" / "olist_master.csv",
+    root_dir / "data" / "global_superstore.csv",
+]
+DATASET_PATH = str(root_dir / "data" / "olist_master.csv")
+for p in possible_paths:
+    if p and p.exists():
+        DATASET_PATH = str(p)
+        logger.info(f"Using dataset at: {DATASET_PATH}")
+        break
 
 
 def get_llm(model_name: str = DEFAULT_MODEL, temperature: float = 0.0) -> Any:
@@ -42,7 +46,7 @@ def get_llm(model_name: str = DEFAULT_MODEL, temperature: float = 0.0) -> Any:
     Defaults to Gemini 2.x Flash via langchain-google-genai.
     """
     if not GEMINI_API_KEY:
-        logger.warning("GEMINI_API_KEY is not set. LLM calls will fail unless a mock/key is provided.")
+        logger.warning("GEMINI_API_KEY / GOOGLE_API_KEY is not set. LLM calls will fail unless a mock/key is provided.")
     
     try:
         from langchain_google_genai import ChatGoogleGenerativeAI
@@ -65,7 +69,10 @@ def get_checkpointer() -> Any:
             import psycopg
             from langgraph.checkpoint.postgres import PostgresSaver
             logger.info("Connecting to PostgreSQL (Neon.tech) for persistent checkpoints...")
-            conn = psycopg.connect(DATABASE_URL, autocommit=True)
+            db_url = DATABASE_URL
+            if "sslmode=" not in db_url:
+                db_url += ("&" if "?" in db_url else "?") + "sslmode=require"
+            conn = psycopg.connect(db_url, autocommit=True)
             checkpointer = PostgresSaver(conn)
             checkpointer.setup()
             logger.info("PostgresSaver checkpointer setup complete.")
@@ -76,3 +83,4 @@ def get_checkpointer() -> Any:
     from langgraph.checkpoint.memory import MemorySaver
     logger.info("Using in-memory MemorySaver for conversation checkpointer.")
     return MemorySaver()
+

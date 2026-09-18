@@ -3,6 +3,7 @@
 import React from 'react';
 import { ChatMessage } from '../lib/types';
 import { ReasoningPanel } from './ReasoningPanel';
+import { ChartCanvas } from './ChartCanvas';
 import { User, Sparkles, Loader2 } from 'lucide-react';
 
 interface MessageBubbleProps {
@@ -38,6 +39,11 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLatest 
           <div className="whitespace-pre-wrap font-sans text-[13.5px]">
             {message.content}
           </div>
+
+          {/* Interactive Plotly Chart */}
+          {!isUser && message.chart_spec && (
+            <ChartCanvas spec={message.chart_spec} />
+          )}
 
           {/* Streaming loader indicator */}
           {message.isStreaming && !message.content && (

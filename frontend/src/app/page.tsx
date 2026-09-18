@@ -45,7 +45,7 @@ export default function Home() {
         id: 'welcome-1',
         role: 'assistant',
         content:
-          "👋 **Welcome to Insight Copilot!**\n\nI am your AI Business Intelligence Analyst connected to the **Global Superstore Sales** dataset (51,290 records, 2011–2014).\n\nAsk me about top products, regional sales, margin analysis, seasonal trends, or anomalies — or pick a suggested inquiry from the sidebar to get started!",
+          "👋 **Welcome to Insight Copilot!**\n\nI am your AI Business Intelligence Analyst connected to the **Brazilian E-Commerce (Olist)** dataset (112,650 records, 2016–2018).\n\nAsk me about top product categories, regional sales, payment values, delivery freight, seasonal trends, or anomalies — or pick a suggested inquiry from the sidebar to get started!",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
@@ -186,7 +186,7 @@ export default function Home() {
         {/* Top bar */}
         <header className="h-14 px-6 border-b border-gray-800/80 bg-[#0d1322]/80 backdrop-blur-md flex items-center justify-between flex-shrink-0 z-10">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-200">Global Superstore Sales Analysis</span>
+            <span className="text-sm font-medium text-gray-200">Olist E-Commerce Analytics</span>
             <span className="text-xs text-gray-500 font-mono">[{threadId.slice(0, 16)}...]</span>
           </div>
 
