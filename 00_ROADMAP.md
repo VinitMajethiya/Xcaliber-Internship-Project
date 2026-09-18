@@ -72,13 +72,13 @@ Goal: an evaluator can see the agent think.
 - [ ] **If on Free tier:** confirm the frontend cold-start spinner fires correctly (health-poll loop with "Waking up the backend (~30 s)" message)
 - [ ] **Pre-warm check:** hit the app from your phone 5 minutes before evaluation; confirm Render is awake
 - [ ] Run all 9 demo queries from the test table below against the **hosted** app (not localhost)
-- [ ] `README.md` written from the template
-- [ ] Mermaid architecture diagram rendering correctly on GitHub
+- [x] `README.md` written from the template
+- [x] Mermaid architecture diagram rendering correctly on GitHub
 
 ### Day 5 — Write-up and buffer
-- [ ] `WRITEUP.md` finished (design decisions, trade-offs, what's next)
-- [ ] `docs/` folder committed so reviewers see your thinking
-- [ ] Commit history is clean and tells a story — not one "initial commit" dump
+- [x] `WRITEUP.md` finished (design decisions, trade-offs, what's next)
+- [x] `docs/` folder committed so reviewers see your thinking
+- [x] Commit history is clean and tells a story — not one "initial commit" dump
 - [ ] Reply to the email with: hosted URL, repo link, write-up
 
 ---
@@ -88,43 +88,43 @@ Goal: an evaluator can see the agent think.
 Run through this before you submit. Each line is a point you're being scored on.
 
 **LangGraph architecture (25%)**
-- [ ] `StateGraph` with a `TypedDict` state, not a dict passed around
-- [ ] At least **two** conditional edges (route_after_plan, should_continue) — the brief asks for one, give two
-- [ ] Checkpointer wired, state genuinely persists across turns
-- [ ] Nodes are single-responsibility and individually testable
-- [ ] No node contains a giant prompt doing everything
+- [x] `StateGraph` with a `TypedDict` state, not a dict passed around
+- [x] At least **two** conditional edges (route_after_plan, should_continue) — the brief asks for one, give two
+- [x] Checkpointer wired, state genuinely persists across turns
+- [x] Nodes are single-responsibility and individually testable
+- [x] No node contains a giant prompt doing everything
 
 **Reasoning quality (20%)**
-- [ ] Plan is produced **before** any tool call, and stored in state
-- [ ] Trace says *why* a tool was picked, not just which one
-- [ ] Multi-step queries show a visible second iteration
-- [ ] Trace is visible in the hosted UI without touching the code
+- [x] Plan is produced **before** any tool call, and stored in state
+- [x] Trace says *why* a tool was picked, not just which one
+- [x] Multi-step queries show a visible second iteration
+- [x] Trace is visible in the hosted UI without touching the code
 
 **Tool selection (20%)**
-- [ ] A greeting ("hi") calls **zero** tools
-- [ ] "Plot revenue by month" calls the chart tool, not all four
-- [ ] "Who won the World Cup" gets `unsupported` or `web_search`, never a hallucinated number
-- [ ] At least one demo query chains two tools
+- [x] A greeting ("hi") calls **zero** tools
+- [x] "Plot revenue by month" calls the chart tool, not all four
+- [x] "Who won the World Cup" gets `unsupported` or `web_search`, never a hallucinated number
+- [x] At least one demo query chains two tools
 
 **Insight generation (15%)**
-- [ ] No raw DataFrame dumped as the final answer
-- [ ] Every numeric answer carries its supporting figure
-- [ ] Every answer ends with a takeaway line
+- [x] No raw DataFrame dumped as the final answer
+- [x] Every numeric answer carries its supporting figure
+- [x] Every answer ends with a takeaway line
 
 **Engineering quality (10%)**
-- [ ] Zero secrets in git history (check with `git log -p | grep -i "api_key"`)
-- [ ] `src/` package structure, not one 900-line file
-- [ ] Type hints and docstrings on tools (the docstrings ARE the tool descriptions the LLM reads)
-- [ ] README covers setup, architecture, tools, limitations, assumptions
+- [x] Zero secrets in git history (check with `git log -p | grep -i "api_key"`)
+- [x] `src/` package structure, not one 900-line file
+- [x] Type hints and docstrings on tools (the docstrings ARE the tool descriptions the LLM reads)
+- [x] README covers setup, architecture, tools, limitations, assumptions
 
 **Hosting & UX (10%)**
-- [ ] Frontend public URL (Vercel) works cold, in incognito
-- [ ] Backend public URL (Render) returns 200 on `/health` cold
-- [ ] App doesn't crash on gibberish input
-- [ ] Example questions shown as clickable starters in the UI
-- [ ] Conversation context persists across browser refresh (PostgreSQL checkpointer via `thread_id` stored in localStorage)
-- [ ] Cold-start spinner visible when Render backend is waking; no raw timeout error shown to user
-- [ ] No secrets committed to git (`git log -p | grep -i "api_key\|DATABASE_URL"` returns nothing)
+- [x] Frontend public URL (Vercel) works cold, in incognito
+- [x] Backend public URL (Render) returns 200 on `/health` cold
+- [x] App doesn't crash on gibberish input
+- [x] Example questions shown as clickable starters in the UI
+- [x] Conversation context persists across browser refresh (PostgreSQL checkpointer via `thread_id` stored in localStorage)
+- [x] Cold-start spinner visible when Render backend is waking; no raw timeout error shown to user
+- [x] No secrets committed to git (`git log -p | grep -i "api_key\|DATABASE_URL"` returns nothing)
 
 ---
 
