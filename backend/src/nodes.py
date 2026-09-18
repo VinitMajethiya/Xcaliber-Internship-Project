@@ -36,6 +36,23 @@ class PlanModel(BaseModel):
     )
 
 
+def _extract_text_content(content: Any) -> str:
+    """Robustly normalizes LLM response content into a clean string across model versions."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, list):
+        text_parts = []
+        for part in content:
+            if isinstance(part, dict):
+                text_parts.append(part.get("text", ""))
+            elif hasattr(part, "text"):
+                text_parts.append(getattr(part, "text"))
+            else:
+                text_parts.append(str(part))
+        return "".join(text_parts).strip()
+    return str(content)
+
+
 def planner_node(state: AgentState) -> dict[str, Any]:
     """
     Planner node: analyzes query, consults schema profile, and generates structured plan.
@@ -306,7 +323,7 @@ def synthesizer_node(state: AgentState) -> dict[str, Any]:
                 HumanMessage(content=context_text)
             ]
             response = llm.invoke(messages)
-            answer = response.content
+            answer = _extract_text_content(response.content)
         except Exception as e:
             logger.error(f"Synthesizer LLM failed: {e}")
             answer = f"### Analysis for: {user_query}\n\n{summaries}"
@@ -354,7 +371,7 @@ def direct_answer_node(state: AgentState) -> dict[str, Any]:
                 HumanMessage(content=user_query)
             ]
             response = llm.invoke(messages)
-            answer = response.content
+            answer = _extract_text_content(response.content)
         except Exception as e:
             logger.error(f"Direct answer generation failed: {e}")
             answer = "Hello! I am Insight Copilot. How can I assist you with analyzing your retail e-commerce data today?"
@@ -399,7 +416,7 @@ def unsupported_node(state: AgentState) -> dict[str, Any]:
                 HumanMessage(content=user_query)
             ]
             response = llm.invoke(messages)
-            answer = response.content
+            answer = _extract_text_content(response.content)
         except Exception as e:
             logger.error(f"Unsupported handler failed: {e}")
             answer = "This request is outside the scope of the Brazilian E-Commerce dataset. Please ask an analytical retail data question."
