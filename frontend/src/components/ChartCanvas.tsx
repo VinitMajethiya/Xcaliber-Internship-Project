@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { BarChart3, Maximize2, Minimize2, AlertCircle } from 'lucide-react';
+import { BarChart3, Maximize2, Minimize2, AlertCircle, Download } from 'lucide-react';
 
 interface ChartCanvasProps {
   spec: Record<string, any> | null;
@@ -21,7 +21,6 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
     const renderPlot = async () => {
       try {
         setRenderError(null);
-        // Dynamic import of plotly.js-dist-min to ensure client-only execution
         const PlotlyModule = await import('plotly.js-dist-min');
         const Plotly = PlotlyModule.default || PlotlyModule;
 
@@ -30,23 +29,25 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
         const data = spec.data || [];
         const baseLayout = spec.layout || {};
 
-        // Merge dark aesthetic matching the Insight Copilot design system
+        const chartTitle = title || baseLayout.title?.text || 'Interactive Visualization';
+
         const mergedLayout = {
           ...baseLayout,
+          title: undefined, // Handled in component header
           autosize: true,
           paper_bgcolor: 'transparent',
-          plot_bgcolor: 'rgba(15, 23, 42, 0.4)',
+          plot_bgcolor: 'rgba(15, 23, 42, 0.5)',
           font: {
             family: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
             size: 11,
-            color: '#94A3B8',
+            color: '#94a3b8',
             ...baseLayout.font,
           },
           margin: {
-            l: 45,
-            r: 25,
-            t: baseLayout.title ? 40 : 25,
-            b: 40,
+            l: 50,
+            r: 30,
+            t: 20,
+            b: 45,
             ...baseLayout.margin,
           },
         };
@@ -65,7 +66,6 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
 
         await (Plotly as any).newPlot(containerRef.current, data, mergedLayout, config);
 
-        // Handle auto-resize on window resize
         const handleResize = () => {
           if (containerRef.current && (Plotly as any).Plots) {
             (Plotly as any).Plots.resize(containerRef.current);
@@ -93,34 +93,64 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
     return () => {
       isMounted = false;
     };
-  }, [spec, isExpanded]);
+  }, [spec, isExpanded, title]);
+
+  const handleDownloadPNG = async () => {
+    if (!containerRef.current) return;
+    try {
+      const PlotlyModule = await import('plotly.js-dist-min');
+      const Plotly = PlotlyModule.default || PlotlyModule;
+      await (Plotly as any).downloadImage(containerRef.current, {
+        format: 'png',
+        width: 1200,
+        height: 700,
+        filename: `${(title || 'insight_chart').toLowerCase().replace(/\s+/g, '_')}`,
+      });
+    } catch (e) {
+      console.error('Export PNG failed:', e);
+    }
+  };
 
   if (!spec) return null;
 
   return (
     <div
-      className={`my-3 rounded-xl border border-indigo-500/20 bg-[#090d16] p-3.5 shadow-xl transition-all duration-300 ${
-        isExpanded ? 'col-span-full ring-2 ring-indigo-500/40' : ''
+      className={`my-3.5 rounded-xl border border-slate-800 bg-[#090d16] p-3.5 shadow-xl transition-all duration-200 ${
+        isExpanded ? 'ring-2 ring-blue-500/40' : ''
       }`}
     >
-      {/* Header Bar */}
-      <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-800/60">
+      {/* Chart Header Bar */}
+      <div className="flex items-center justify-between pb-2.5 mb-2 border-b border-slate-800/80">
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-indigo-500/20 flex items-center justify-center">
-            <BarChart3 className="w-3 h-3 text-indigo-400" />
+          <div className="flex h-5 w-5 items-center justify-center rounded bg-blue-500/10 text-blue-400">
+            <BarChart3 className="h-3.5 w-3.5" />
           </div>
-          <span className="text-xs font-medium text-gray-200">
+          <span className="text-xs font-semibold text-slate-200">
             {title || spec.layout?.title?.text || 'Interactive Visualization'}
+          </span>
+          <span className="rounded border border-blue-500/20 bg-blue-500/10 px-1.5 py-0.5 text-[9px] font-mono uppercase tracking-wider text-blue-300">
+            Plotly Dynamic
           </span>
         </div>
 
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          title={isExpanded ? 'Collapse chart' : 'Expand chart'}
-          className="p-1 text-gray-400 hover:text-white rounded hover:bg-gray-800/80 transition-colors"
-        >
-          {isExpanded ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-        </button>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={handleDownloadPNG}
+            title="Download Chart as PNG"
+            className="flex items-center gap-1 rounded border border-slate-800 bg-slate-900/80 px-2 py-1 text-[11px] text-slate-300 transition-colors hover:bg-slate-800 hover:text-white"
+          >
+            <Download className="h-3 w-3 text-slate-400" />
+            <span className="hidden sm:inline">Export PNG</span>
+          </button>
+
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            title={isExpanded ? 'Collapse chart' : 'Expand chart'}
+            className="rounded border border-slate-800 bg-slate-900/80 p-1 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          >
+            {isExpanded ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+          </button>
+        </div>
       </div>
 
       {/* Error state */}
@@ -133,7 +163,7 @@ export const ChartCanvas: React.FC<ChartCanvasProps> = ({ spec, title }) => {
         /* Plotly DOM Container */
         <div
           ref={containerRef}
-          style={{ height: isExpanded ? '480px' : '320px' }}
+          style={{ height: isExpanded ? '520px' : '340px' }}
           className="w-full transition-all duration-200"
         />
       )}
