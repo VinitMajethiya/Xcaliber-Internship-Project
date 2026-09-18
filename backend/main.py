@@ -1,7 +1,9 @@
 import os
+import sys
 import json
 import uuid
 import logging
+from pathlib import Path
 from typing import AsyncGenerator
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,9 +11,22 @@ from pydantic import BaseModel, Field
 from sse_starlette.sse import EventSourceResponse
 from langchain_core.messages import HumanMessage
 
-from backend.src.graph import build_graph
-from backend.src.schema import get_dataset_profile
-from backend.src.data import get_dataset
+# Ensure both repo root and backend directory are in sys.path
+_current_dir = Path(__file__).resolve().parent
+_parent_dir = _current_dir.parent
+for _p in [str(_current_dir), str(_parent_dir)]:
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+try:
+    from backend.src.graph import build_graph
+    from backend.src.schema import get_dataset_profile
+    from backend.src.data import get_dataset
+except (ImportError, ModuleNotFoundError):
+    from src.graph import build_graph
+    from src.schema import get_dataset_profile
+    from src.data import get_dataset
+
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger("insight_copilot.api")
@@ -42,12 +57,18 @@ graph = None
 async def on_startup():
     global graph
     logger.info("Initializing Insight Copilot backend...")
-    # Pre-warm dataset cache
-    df = get_dataset()
-    logger.info(f"Dataset preloaded with {len(df):,} records.")
-    # Initialize graph
-    graph = build_graph()
-    logger.info("Backend startup complete and ready for queries.")
+    try:
+        df = get_dataset()
+        logger.info(f"Dataset preloaded successfully with {len(df):,} records.")
+    except Exception as e:
+        logger.error(f"Dataset preloading deferred to first query: {e}")
+
+    try:
+        graph = build_graph()
+        logger.info("Backend graph compiled successfully and ready for queries.")
+    except Exception as e:
+        logger.error(f"Graph compilation deferred: {e}")
+
 
 
 class ChatRequest(BaseModel):
