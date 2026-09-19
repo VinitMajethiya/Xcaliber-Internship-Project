@@ -138,6 +138,7 @@ export default function Home() {
                 ...msg,
                 reasoning_trace: accumulatedTrace,
                 content: data.final_answer || msg.content,
+                chart_spec: data.chart_spec || msg.chart_spec,
               };
             }
             return msg;
@@ -156,8 +157,8 @@ export default function Home() {
                 isStreaming: false,
                 content: data.final_answer || msg.content || 'Analysis complete.',
                 reasoning_trace: data.reasoning_trace || accumulatedTrace,
-                chart_spec: data.chart_spec,
-                tool_results: data.tool_results,
+                chart_spec: data.chart_spec || msg.chart_spec,
+                tool_results: data.tool_results || msg.tool_results,
               };
             }
             return msg;

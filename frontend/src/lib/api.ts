@@ -68,6 +68,7 @@ export async function streamChatQuery({
     const reader = response.body.getReader();
     const decoder = new TextDecoder('utf-8');
     let buffer = '';
+    let currentEvent = 'message';
 
     while (true) {
       const { done, value } = await reader.read();
@@ -77,11 +78,12 @@ export async function streamChatQuery({
       const lines = buffer.split('\n');
       buffer = lines.pop() || '';
 
-      let currentEvent = 'message';
-
       for (const line of lines) {
         const trimmed = line.trim();
-        if (!trimmed) continue;
+        if (trimmed === '') {
+          currentEvent = 'message';
+          continue;
+        }
 
         if (trimmed.startsWith('event:')) {
           currentEvent = trimmed.replace('event:', '').trim();
