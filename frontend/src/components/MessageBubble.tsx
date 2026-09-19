@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage } from '../lib/types';
+import { parseAnalystAnswer } from '../lib/parseAnalystAnswer';
 import { ReasoningPanel } from './ReasoningPanel';
 import { ChartCanvas } from './ChartCanvas';
 import { DataTable } from './DataTable';
@@ -76,6 +77,12 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
     return Array.from(new Set(chips)).slice(0, 2);
   }, [isUser, message.content, message.isStreaming, message.chart_spec]);
 
+  // Parse 3-part structured insight (Direct Finding / Metrics / Strategic Takeaway)
+  const parsed = React.useMemo(() => {
+    if (isUser || !message.content) return null;
+    return parseAnalystAnswer(message.content);
+  }, [isUser, message.content]);
+
   return (
     <div className={`group relative my-4 flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
       {/* Analyst Icon */}
@@ -99,22 +106,75 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             <ReasoningPanel steps={message.reasoning_trace} defaultExpanded={isLatest} />
           )}
 
-          {/* Assistant Executive Report (Markdown Rendered) */}
+          {/* Assistant Executive Report (Markdown / Structured Cards) */}
           {!isUser ? (
-            <div className="analyst-prose">
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  table: ({ node, ...props }) => (
-                    <div className="analyst-table-container">
-                      <table className="analyst-table" {...props} />
+            parsed?.isStructured ? (
+              <div className="space-y-2.5 pt-1">
+                {/* 1. Direct Finding / Answer */}
+                {parsed.finding && (
+                  <div className="rounded-md border border-[#252d3c] bg-[#141822] p-3 text-[13.5px] leading-snug shadow-sm">
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#93c5fd] mb-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+                      <span>Executive Finding</span>
                     </div>
-                  ),
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
-            </div>
+                    <div className="font-medium text-[#f1f3f5] analyst-prose">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{parsed.finding}</ReactMarkdown>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. Supporting Numbers & Metrics */}
+                {parsed.metrics && (
+                  <div className="rounded-md border border-[#1e2430] bg-[#0f1218] p-3 text-[12.5px] shadow-sm">
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#7ec29a] mb-1.5">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+                      <span>Supporting Metrics & Evidence</span>
+                    </div>
+                    <div className="analyst-prose text-[#c4cbd4]">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          table: ({ node, ...props }) => (
+                            <div className="analyst-table-container">
+                              <table className="analyst-table" {...props} />
+                            </div>
+                          ),
+                        }}
+                      >
+                        {parsed.metrics}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. Strategic Takeaway / Why it Matters */}
+                {parsed.whyItMatters && (
+                  <div className="rounded-md border-l-2 border-[#3b82f6] border border-[#1f2533] bg-[#121622] px-3.5 py-2.5 text-[12px] shadow-sm">
+                    <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#93c5fd] mb-1">
+                      <span>💡 Strategic Takeaway / Why it Matters</span>
+                    </div>
+                    <div className="text-[#c4cbd4] leading-relaxed analyst-prose">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{parsed.whyItMatters}</ReactMarkdown>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="analyst-prose">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    table: ({ node, ...props }) => (
+                      <div className="analyst-table-container">
+                        <table className="analyst-table" {...props} />
+                      </div>
+                    ),
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            )
           ) : (
             <div className="whitespace-pre-wrap font-sans text-[13.5px]">{message.content}</div>
           )}

@@ -1,0 +1,25 @@
+graph TD
+    User([User Query]) --> Planner[Planner Node<br/>LLM + Schema Context]
+    
+    Planner -->|route == 'direct_answer'| Direct[Direct Answer Node<br/>Greetings / Capabilities]
+    Planner -->|route == 'unsupported'| Unsupported[Unsupported Node<br/>Honest Refusal & Suggestions]
+    Planner -->|route == 'tools'| ToolExec[Tool Executor Node<br/>Sequential Tool Runner]
+    
+    ToolExec -->|tool == 'query_data'| T1[query_data<br/>Pandas structured params]
+    ToolExec -->|tool == 'compute_metrics'| T2[compute_metrics<br/>Stats, CV Seasonality, Outliers]
+    ToolExec -->|tool == 'make_chart'| T3[make_chart<br/>Plotly figure JSON spec]
+    ToolExec -->|tool == 'web_search'| T4[web_search<br/>DuckDuckGo live context]
+    
+    T1 --> LoopRouter{should_continue<br/>remaining tools or max 4 iterations}
+    T2 --> LoopRouter
+    T3 --> LoopRouter
+    T4 --> LoopRouter
+    
+    LoopRouter -->|more tools in plan| ToolExec
+    LoopRouter -->|error encountered| ErrHandler[Error Handler Node<br/>Graceful Diagnostic Guidance]
+    LoopRouter -->|plan complete| Synthesizer[Synthesizer Node<br/>3-Part Executive Answer]
+    
+    Synthesizer --> Output([Final Answer + Reasoning Trace + Chart Spec])
+    Direct --> Output
+    Unsupported --> Output
+    ErrHandler --> Output

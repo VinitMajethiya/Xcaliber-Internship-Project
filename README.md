@@ -157,3 +157,21 @@ Insight Copilot is benchmarked against the 9 canonical evaluation queries:
 3. **Graceful Error Recovery**: Tool validation errors provide closest-match suggestions (`difflib.get_close_matches`), enabling the agent to re-plan instead of throwing a traceback.
 4. **Resilient Production Checkpointing**: Neon PostgreSQL `PostgresSaver` handles serverless cold-starts without losing user conversation context.
 
+---
+
+## Assumptions
+
+- Relative time phrases ("recent", "last quarter") resolve against the dataset's own date range, not today's calendar date, since the dataset is static — the agent surfaces this resolution back to the user rather than silently guessing.
+- Numeric questions about revenue/payment totals are answered against the dataset's own payment columns as provided, with no currency conversion or inflation adjustment.
+- When a question is ambiguous but reasonably answerable, the agent picks the most likely interpretation and proceeds rather than blocking on a clarifying question.
+
+---
+
+## Known limitations
+
+- Conversation history persists via a Postgres checkpointer (Neon) when `DATABASE_URL` is set, falling back to an in-process `MemorySaver` otherwise — in the fallback case, history is lost on backend restart.
+- The tool set and reasoning are scoped to this one dataset; there's no schema-agnostic ingestion for a different uploaded dataset.
+- No automated eval harness exists yet — tool-selection accuracy was verified manually against the fixed query set in `scripts/final_routing_check.py`, not a labeled benchmark.
+- Tool chains are capped at 4 iterations; a question genuinely needing a 5th step gets a partial answer, with that gap acknowledged in the response rather than hidden.
+- `make_chart` covers the chart types implemented in `ChartCanvas.tsx` (line, bar, scatter, area) — not every possible visualization request is supported.
+
